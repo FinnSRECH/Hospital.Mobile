@@ -1,32 +1,201 @@
 <?xml version="1.0" encoding="utf-8" ?>
+
 <ContentPage
     x:Class="Hospital.Mobile.Views.AppointmentDetailsPage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     Title="Afspraak">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="24" Spacing="16">
-            <Label x:Name="TypeLabel" TextColor="{StaticResource Primary}" FontAttributes="Bold" />
-            <Label x:Name="TitleLabel" FontSize="28" FontAttributes="Bold" />
+	<ScrollView>
 
-            <Border BackgroundColor="White" Stroke="{StaticResource Border}" StrokeShape="RoundRectangle 14" Padding="18">
-                <VerticalStackLayout Spacing="10">
-                    <Label Text="Patiënt" FontAttributes="Bold" />
-                    <Label x:Name="PatientLabel" />
-                    <Label Text="Datum en tijd" FontAttributes="Bold" />
-                    <Label x:Name="DateLabel" />
-                    <Label Text="Locatie" FontAttributes="Bold" />
-                    <Label x:Name="LocationLabel" />
-                    <Label Text="Behandelingsverslag" FontAttributes="Bold" />
-                    <Label x:Name="ReportLabel" />
-                </VerticalStackLayout>
-            </Border>
+		<VerticalStackLayout
+            Padding="24"
+            Spacing="18">
 
-            <Label Text="Notitie" FontAttributes="Bold" />
-            <Editor x:Name="NoteEditor" Placeholder="Voeg een korte notitie toe..." AutoSize="TextChanges" MinimumHeightRequest="100" />
+			<Label
+                x:Name="TypeLabel"
+                TextColor="{StaticResource Primary}"
+                FontAttributes="Bold" />
 
-            <Button Text="Afspraak afronden" Clicked="OnCompleteClicked" />
-        </VerticalStackLayout>
-    </ScrollView>
+			<Label
+                x:Name="TitleLabel"
+                FontSize="28"
+                FontAttributes="Bold" />
+
+			<Border
+                BackgroundColor="White"
+                Stroke="{StaticResource Border}"
+                StrokeShape="RoundRectangle 14"
+                Padding="18">
+
+				<VerticalStackLayout
+                    Spacing="12">
+
+					<Label
+                        Text="Patiënt"
+                        FontAttributes="Bold" />
+
+					<Label
+                        x:Name="PatientLabel" />
+
+					<Label
+                        Text="Geboortedatum"
+                        FontAttributes="Bold" />
+
+					<Label
+                        x:Name="BirthDateLabel" />
+
+					<Label
+                        Text="E-mailadres"
+                        FontAttributes="Bold" />
+
+					<Label
+                        x:Name="EmailLabel" />
+
+					<Label
+                        Text="Telefoonnummer"
+                        FontAttributes="Bold" />
+
+					<Label
+                        x:Name="PhoneLabel" />
+
+					<Label
+                        Text="Adres"
+                        FontAttributes="Bold" />
+
+					<Label
+                        x:Name="AddressLabel" />
+
+				</VerticalStackLayout>
+
+			</Border>
+
+			<Border
+                BackgroundColor="White"
+                Stroke="{StaticResource Border}"
+                StrokeShape="RoundRectangle 14"
+                Padding="18">
+
+				<VerticalStackLayout
+                    Spacing="12">
+
+					<Label
+                        Text="Afspraakgegevens"
+                        FontSize="18"
+                        FontAttributes="Bold" />
+
+					<Label
+                        Text="Datum en tijd"
+                        FontAttributes="Bold" />
+
+					<Label
+                        x:Name="DateLabel" />
+
+					<Label
+                        Text="Locatie"
+                        FontAttributes="Bold" />
+
+					<Label
+                        x:Name="LocationLabel" />
+
+					<Label
+                        Text="Status"
+                        FontAttributes="Bold" />
+
+					<Label
+                        x:Name="StatusLabel" />
+
+					<Label
+                        Text="Behandelingsverslag"
+                        FontAttributes="Bold" />
+
+					<Label
+                        x:Name="ReportLabel" />
+
+				</VerticalStackLayout>
+
+			</Border>
+
+			<Border
+                BackgroundColor="White"
+                Stroke="{StaticResource Border}"
+                StrokeShape="RoundRectangle 14"
+                Padding="18">
+
+				<VerticalStackLayout
+                    Spacing="12">
+
+					<Label
+                        Text="Behandeling"
+                        FontSize="18"
+                        FontAttributes="Bold" />
+
+					<Label
+                        Text="Actieve behandeling"
+                        FontAttributes="Bold" />
+
+					<Label
+                        x:Name="TreatmentLabel" />
+
+					<Label
+                        Text="Behandelstatus"
+                        FontAttributes="Bold" />
+
+					<Picker
+                        x:Name="TreatmentStatusPicker"
+                        Title="Selecteer status">
+
+						<Picker.Items>
+							<x:String>Active</x:String>
+							<x:String>Completed</x:String>
+							<x:String>Cancelled</x:String>
+						</Picker.Items>
+
+					</Picker>
+
+					<Button
+                        Text="Behandelstatus opslaan"
+                        Clicked="OnTreatmentStatusClicked" />
+
+				</VerticalStackLayout>
+
+			</Border>
+
+			<Border
+                BackgroundColor="White"
+                Stroke="{StaticResource Border}"
+                StrokeShape="RoundRectangle 14"
+                Padding="18">
+
+				<VerticalStackLayout
+                    Spacing="12">
+
+					<Label
+                        Text="Notitie"
+                        FontSize="18"
+                        FontAttributes="Bold" />
+
+					<Editor
+                        x:Name="NoteEditor"
+                        Placeholder="Voeg een korte notitie toe..."
+                        AutoSize="TextChanges"
+                        MinimumHeightRequest="100" />
+
+					<Button
+                        Text="Notitie opslaan"
+                        Clicked="OnSaveNoteClicked" />
+
+				</VerticalStackLayout>
+
+			</Border>
+
+			<Button
+                x:Name="CompleteButton"
+                Text="Afspraak afronden"
+                Clicked="OnCompleteClicked" />
+
+		</VerticalStackLayout>
+
+	</ScrollView>
+
 </ContentPage>
