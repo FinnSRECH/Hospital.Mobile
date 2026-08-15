@@ -7,6 +7,9 @@ public class HospitalMobileDataService
 	public static HospitalMobileDataService Instance { get; } =
 		new();
 
+	private readonly MobileDatabaseService _database =
+		new();
+
 	private readonly List<MobilePatient> _patients =
 	[
 		new MobilePatient
@@ -75,57 +78,124 @@ public class HospitalMobileDataService
 	// PLANNING
 	// -------------------------
 
-	public IReadOnlyList<MobileAppointment>
-		GetPersonalPlanning()
+	public async Task<IReadOnlyList<MobileAppointment>>
+		GetPersonalPlanningAsync()
 	{
+		foreach (var appointment in _appointments)
+		{
+			await LoadAppointmentStateAsync(
+				appointment);
+		}
+
 		return _appointments
-			.OrderBy(a => a.StartTime)
+			.OrderBy(a =>
+				a.StartTime)
 			.ToList();
 	}
 
-	public MobileAppointment? GetAppointment(
-		int id)
+	public async Task<MobileAppointment?>
+		GetAppointmentAsync(
+			int id)
 	{
-		return _appointments
-			.FirstOrDefault(a =>
-				a.Id == id);
+		var appointment =
+			_appointments
+				.FirstOrDefault(a =>
+					a.Id == id);
+
+		if (appointment is null)
+		{
+			return null;
+		}
+
+		await LoadAppointmentStateAsync(
+			appointment);
+
+		return appointment;
+	}
+
+	private async Task LoadAppointmentStateAsync(
+		MobileAppointment appointment)
+	{
+		var state =
+			await _database
+				.GetAppointmentStateAsync(
+					appointment.Id);
+
+		if (state is null)
+		{
+			return;
+		}
+
+		appointment.Notes =
+			state.Note;
+
+		appointment.Status =
+			state.AppointmentStatus;
 	}
 
 	// -------------------------
 	// PATIENTEN
 	// -------------------------
 
-	public MobilePatient? GetPatient(
-		int patientId)
+	public async Task<MobilePatient?>
+		GetPatientAsync(
+			int patientId)
 	{
-		return _patients
-			.FirstOrDefault(p =>
-				p.Id == patientId);
+		var patient =
+			_patients
+				.FirstOrDefault(p =>
+					p.Id == patientId);
+
+		if (patient is null)
+		{
+			return null;
+		}
+
+		var state =
+			await _database
+				.GetTreatmentStateAsync(
+					patientId);
+
+		if (state is not null)
+		{
+			patient.TreatmentStatus =
+				state.TreatmentStatus;
+		}
+
+		return patient;
 	}
 
 	// -------------------------
 	// NOTITIES
 	// -------------------------
 
-	public bool SaveNote(
+	public async Task<bool> SaveNoteAsync(
 		int appointmentId,
 		string note)
 	{
 		var appointment =
-			GetAppointment(appointmentId);
+			_appointments
+				.FirstOrDefault(a =>
+					a.Id == appointmentId);
 
 		if (appointment is null)
 		{
 			return false;
 		}
 
-		if (string.IsNullOrWhiteSpace(note))
+		if (string.IsNullOrWhiteSpace(
+				note))
 		{
 			return false;
 		}
 
 		appointment.Notes =
 			note.Trim();
+
+		await _database
+			.SaveNoteAsync(
+				appointmentId,
+				appointment.Notes);
 
 		return true;
 	}
@@ -134,11 +204,14 @@ public class HospitalMobileDataService
 	// AFSPRAAK AFRONDEN
 	// -------------------------
 
-	public bool CompleteAppointment(
-		int appointmentId)
+	public async Task<bool>
+		CompleteAppointmentAsync(
+			int appointmentId)
 	{
 		var appointment =
-			GetAppointment(appointmentId);
+			_appointments
+				.FirstOrDefault(a =>
+					a.Id == appointmentId);
 
 		if (appointment is null)
 		{
@@ -153,6 +226,11 @@ public class HospitalMobileDataService
 		appointment.Status =
 			"Completed";
 
+		await _database
+			.SaveAppointmentStatusAsync(
+				appointmentId,
+				appointment.Status);
+
 		return true;
 	}
 
@@ -160,25 +238,34 @@ public class HospitalMobileDataService
 	// BEHANDELSTATUS
 	// -------------------------
 
-	public bool UpdateTreatmentStatus(
-		int patientId,
-		string status)
+	public async Task<bool>
+		UpdateTreatmentStatusAsync(
+			int patientId,
+			string status)
 	{
 		var patient =
-			GetPatient(patientId);
+			_patients
+				.FirstOrDefault(p =>
+					p.Id == patientId);
 
 		if (patient is null)
 		{
 			return false;
 		}
 
-		if (string.IsNullOrWhiteSpace(status))
+		if (string.IsNullOrWhiteSpace(
+				status))
 		{
 			return false;
 		}
 
 		patient.TreatmentStatus =
 			status.Trim();
+
+		await _database
+			.SaveTreatmentStatusAsync(
+				patientId,
+				patient.TreatmentStatus);
 
 		return true;
 	}

@@ -15,9 +15,11 @@ public partial class AppointmentDetailsPage : ContentPage
 	{
 		set
 		{
-			if (int.TryParse(value, out var id))
+			if (int.TryParse(
+					value,
+					out var id))
 			{
-				LoadAppointment(id);
+				_ = LoadAppointmentAsync(id);
 			}
 		}
 	}
@@ -34,10 +36,11 @@ public partial class AppointmentDetailsPage : ContentPage
 	// GEGEVENS LADEN
 	// -------------------------
 
-	private void LoadAppointment(int id)
+	private async Task LoadAppointmentAsync(
+		int id)
 	{
 		_appointment =
-			_data.GetAppointment(id);
+			await _data.GetAppointmentAsync(id);
 
 		if (_appointment is null)
 		{
@@ -45,7 +48,7 @@ public partial class AppointmentDetailsPage : ContentPage
 		}
 
 		_patient =
-			_data.GetPatient(
+			await _data.GetPatientAsync(
 				_appointment.PatientId);
 
 		TypeLabel.Text =
@@ -95,16 +98,34 @@ public partial class AppointmentDetailsPage : ContentPage
 			TreatmentLabel.Text =
 				_patient.ActiveTreatment;
 
-			TreatmentStatusPicker.SelectedItem =
-				_patient.TreatmentStatus;
+			TreatmentStatusPicker.SelectedIndex =
+				_patient.TreatmentStatus switch
+				{
+					"Active" => 0,
+					"Completed" => 1,
+					"Cancelled" => 2,
+					_ => -1
+				};
 		}
 		else
 		{
-			BirthDateLabel.Text = "-";
-			EmailLabel.Text = "-";
-			PhoneLabel.Text = "-";
-			AddressLabel.Text = "-";
-			TreatmentLabel.Text = "-";
+			BirthDateLabel.Text =
+				"-";
+
+			EmailLabel.Text =
+				"-";
+
+			PhoneLabel.Text =
+				"-";
+
+			AddressLabel.Text =
+				"-";
+
+			TreatmentLabel.Text =
+				"-";
+
+			TreatmentStatusPicker.SelectedIndex =
+				-1;
 		}
 
 		UpdateCompletedState();
@@ -135,7 +156,7 @@ public partial class AppointmentDetailsPage : ContentPage
 		}
 
 		var saved =
-			_data.SaveNote(
+			await _data.SaveNoteAsync(
 				_appointment.Id,
 				NoteEditor.Text);
 
@@ -151,7 +172,7 @@ public partial class AppointmentDetailsPage : ContentPage
 
 		await DisplayAlertAsync(
 			"Notitie opgeslagen",
-			"De notitie is succesvol toegevoegd aan de afspraak.",
+			"De notitie is lokaal opgeslagen en blijft offline beschikbaar.",
 			"OK");
 	}
 
@@ -180,7 +201,7 @@ public partial class AppointmentDetailsPage : ContentPage
 		}
 
 		var updated =
-			_data.UpdateTreatmentStatus(
+			await _data.UpdateTreatmentStatusAsync(
 				_patient.Id,
 				selectedStatus);
 
@@ -196,7 +217,7 @@ public partial class AppointmentDetailsPage : ContentPage
 
 		await DisplayAlertAsync(
 			"Status gewijzigd",
-			"De behandelstatus is succesvol bijgewerkt.",
+			"De behandelstatus is lokaal opgeslagen.",
 			"OK");
 	}
 
@@ -236,7 +257,7 @@ public partial class AppointmentDetailsPage : ContentPage
 		}
 
 		var completed =
-			_data.CompleteAppointment(
+			await _data.CompleteAppointmentAsync(
 				_appointment.Id);
 
 		if (!completed)
@@ -256,7 +277,7 @@ public partial class AppointmentDetailsPage : ContentPage
 
 		await DisplayAlertAsync(
 			"Afspraak afgerond",
-			"De afspraak is succesvol afgerond.",
+			"De afspraak is afgerond en lokaal opgeslagen.",
 			"OK");
 	}
 
