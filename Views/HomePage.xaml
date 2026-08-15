@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Hospital.Mobile.Views.HomePage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Home">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="20">
+            <Label Text="Goedemorgen, Emma" FontSize="30" FontAttributes="Bold" />
+            <Label
+                Text="Bekijk waar je vandaag wordt verwacht en open snel je patiëntinformatie."
+                TextColor="{StaticResource TextMuted}" />
+
+            <Border BackgroundColor="White" Stroke="{StaticResource Border}" StrokeShape="RoundRectangle 16" Padding="20">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="Persoonlijke planning" FontSize="20" FontAttributes="Bold" />
+                    <Label Text="Consultaties en operaties in één overzicht." TextColor="{StaticResource TextMuted}" />
+                    <Button Text="Planning bekijken" Clicked="OnPlanningClicked" />
+                </VerticalStackLayout>
+            </Border>
+
+            <Border BackgroundColor="White" Stroke="{StaticResource Border}" StrokeShape="RoundRectangle 16" Padding="20">
+                <VerticalStackLayout Spacing="6">
+                    <Label Text="Mobiele functies" FontSize="18" FontAttributes="Bold" />
+                    <Label Text="Later voegen we biometrie, camera/foto en offline SQLite-opslag toe." TextColor="{StaticResource TextMuted}" />
+                </VerticalStackLayout>
+            </Border>
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

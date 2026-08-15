@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="Hospital.Mobile.Views.LoginPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Inloggen">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="28" Spacing="18" VerticalOptions="Center">
+
+            <Border
+                BackgroundColor="White"
+                Stroke="{StaticResource Border}"
+                StrokeShape="RoundRectangle 18"
+                Padding="24">
+
+                <VerticalStackLayout Spacing="16">
+                    <Label
+                        Text="H+"
+                        TextColor="{StaticResource Primary}"
+                        FontAttributes="Bold"
+                        FontSize="34"
+                        HorizontalOptions="Center" />
+
+                    <Label
+                        Text="Hospital Mobile"
+                        FontSize="28"
+                        FontAttributes="Bold"
+                        TextColor="{StaticResource TextPrimary}"
+                        HorizontalTextAlignment="Center" />
+
+                    <Label
+                        Text="Log in als arts of chirurg om je persoonlijke planning te bekijken."
+                        TextColor="{StaticResource TextMuted}"
+                        HorizontalTextAlignment="Center" />
+
+                    <Label Text="E-mailadres" FontAttributes="Bold" />
+                    <Entry
+                        x:Name="EmailEntry"
+                        Keyboard="Email"
+                        Placeholder="naam@hospital.nl"
+                        Text="emma.jansen@hospital.nl" />
+
+                    <Label Text="Wachtwoord" FontAttributes="Bold" />
+                    <Entry
+                        x:Name="PasswordEntry"
+                        IsPassword="True"
+                        Placeholder="Wachtwoord"
+                        Text="Welkom123!" />
+
+                    <Label
+                        x:Name="ErrorLabel"
+                        IsVisible="False"
+                        TextColor="#9B2C2C" />
+
+                    <Button
+                        Text="Inloggen"
+                        Clicked="OnLoginClicked" />
+                </VerticalStackLayout>
+            </Border>
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
