@@ -189,6 +189,55 @@
 
 			</Border>
 
+			<Border
+                BackgroundColor="White"
+                Stroke="{StaticResource Border}"
+                StrokeShape="RoundRectangle 14"
+                Padding="18">
+
+				<VerticalStackLayout
+                    Spacing="12">
+
+					<Label
+                        Text="Foto bij afspraak"
+                        FontSize="18"
+                        FontAttributes="Bold" />
+
+					<Label
+                        Text="Maak een nieuwe foto of selecteer een bestaande foto die relevant is voor deze afspraak."
+                        TextColor="{StaticResource TextMuted}" />
+
+					<Image
+                        x:Name="AppointmentPhoto"
+                        HeightRequest="220"
+                        Aspect="AspectFit"
+                        IsVisible="False" />
+
+					<Label
+                        x:Name="PhotoStatusLabel"
+                        Text="Nog geen foto toegevoegd."
+                        TextColor="{StaticResource TextMuted}" />
+
+					<Grid
+                        ColumnDefinitions="*,*"
+                        ColumnSpacing="10">
+
+						<Button
+                            Grid.Column="0"
+                            Text="Foto maken"
+                            Clicked="OnTakePhotoClicked" />
+
+						<Button
+                            Grid.Column="1"
+                            Text="Foto selecteren"
+                            Clicked="OnPickPhotoClicked" />
+
+					</Grid>
+
+				</VerticalStackLayout>
+
+			</Border>
+
 			<Button
                 x:Name="CompleteButton"
                 Text="Afspraak afronden"

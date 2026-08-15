@@ -1,5 +1,7 @@
 using Hospital.Mobile.Models;
 using Hospital.Mobile.Services;
+using Microsoft.Maui.Media;
+using Microsoft.Maui.Storage;
 
 namespace Hospital.Mobile.Views;
 
@@ -128,6 +130,8 @@ public partial class AppointmentDetailsPage : ContentPage
 				-1;
 		}
 
+		LoadExistingPhoto();
+
 		UpdateCompletedState();
 	}
 
@@ -219,6 +223,230 @@ public partial class AppointmentDetailsPage : ContentPage
 			"Status gewijzigd",
 			"De behandelstatus is lokaal opgeslagen.",
 			"OK");
+	}
+
+	// -------------------------
+	// FOTO MAKEN
+	// -------------------------
+
+	private async void OnTakePhotoClicked(
+		object? sender,
+		EventArgs e)
+	{
+		if (_appointment is null)
+		{
+			return;
+		}
+
+		if (!MediaPicker.Default.IsCaptureSupported)
+		{
+			await DisplayAlertAsync(
+				"Camera niet beschikbaar",
+				"Op dit apparaat kan de camera niet vanuit de app worden gebruikt.",
+				"OK");
+
+			return;
+		}
+
+		try
+		{
+			var photo =
+				await MediaPicker.Default
+					.CapturePhotoAsync();
+
+			if (photo is null)
+			{
+				return;
+			}
+
+			await SavePhotoAsync(
+				photo,
+				"Foto toegevoegd",
+				"De gemaakte foto is succesvol aan deze afspraak gekoppeld.");
+		}
+		catch (PermissionException)
+		{
+			await DisplayAlertAsync(
+				"Geen cameratoegang",
+				"Geef Hospital Mobile toestemming om de camera te gebruiken.",
+				"OK");
+		}
+		catch (Exception)
+		{
+			await DisplayAlertAsync(
+				"Foto maken mislukt",
+				"De foto kon niet worden gemaakt of opgeslagen.",
+				"OK");
+		}
+	}
+
+	// -------------------------
+	// FOTO SELECTEREN
+	// -------------------------
+
+	private async void OnPickPhotoClicked(
+		object? sender,
+		EventArgs e)
+	{
+		if (_appointment is null)
+		{
+			return;
+		}
+
+		try
+		{
+			var photo =
+				await MediaPicker.Default
+					.PickPhotoAsync();
+
+			if (photo is null)
+			{
+				return;
+			}
+
+			await SavePhotoAsync(
+				photo,
+				"Foto geselecteerd",
+				"De geselecteerde foto is succesvol aan deze afspraak gekoppeld.");
+		}
+		catch (PermissionException)
+		{
+			await DisplayAlertAsync(
+				"Geen toegang tot foto's",
+				"Geef Hospital Mobile toestemming om foto's te selecteren.",
+				"OK");
+		}
+		catch (Exception)
+		{
+			await DisplayAlertAsync(
+				"Foto selecteren mislukt",
+				"De foto kon niet worden geselecteerd of opgeslagen.",
+				"OK");
+		}
+	}
+
+	// -------------------------
+	// FOTO LOKAAL OPSLAAN
+	// -------------------------
+
+	private async Task SavePhotoAsync(
+		FileResult photo,
+		string successTitle,
+		string successMessage)
+	{
+		if (_appointment is null)
+		{
+			return;
+		}
+
+		DeleteExistingPhotos(
+			_appointment.Id);
+
+		var extension =
+			Path.GetExtension(
+				photo.FileName);
+
+		if (string.IsNullOrWhiteSpace(
+				extension))
+		{
+			extension =
+				".jpg";
+		}
+
+		var localFileName =
+			$"appointment-{_appointment.Id}-{Guid.NewGuid()}{extension}";
+
+		var localFilePath =
+			Path.Combine(
+				FileSystem.AppDataDirectory,
+				localFileName);
+
+		await using var sourceStream =
+			await photo.OpenReadAsync();
+
+		await using var localFileStream =
+			File.Open(
+				localFilePath,
+				FileMode.Create,
+				FileAccess.Write);
+
+		await sourceStream.CopyToAsync(
+			localFileStream);
+
+		AppointmentPhoto.Source =
+			ImageSource.FromFile(
+				localFilePath);
+
+		AppointmentPhoto.IsVisible =
+			true;
+
+		PhotoStatusLabel.Text =
+			"Foto lokaal opgeslagen bij deze afspraak.";
+
+		await DisplayAlertAsync(
+			successTitle,
+			successMessage,
+			"OK");
+	}
+
+	// -------------------------
+	// BESTAANDE FOTO LADEN
+	// -------------------------
+
+	private void LoadExistingPhoto()
+	{
+		if (_appointment is null)
+		{
+			return;
+		}
+
+		var photos =
+			Directory.GetFiles(
+				FileSystem.AppDataDirectory,
+				$"appointment-{_appointment.Id}-*");
+
+		var photoPath =
+			photos.FirstOrDefault();
+
+		if (photoPath is null)
+		{
+			AppointmentPhoto.IsVisible =
+				false;
+
+			PhotoStatusLabel.Text =
+				"Nog geen foto toegevoegd.";
+
+			return;
+		}
+
+		AppointmentPhoto.Source =
+			ImageSource.FromFile(
+				photoPath);
+
+		AppointmentPhoto.IsVisible =
+			true;
+
+		PhotoStatusLabel.Text =
+			"Foto lokaal opgeslagen bij deze afspraak.";
+	}
+
+	// -------------------------
+	// OUDE FOTO VERWIJDEREN
+	// -------------------------
+
+	private static void DeleteExistingPhotos(
+		int appointmentId)
+	{
+		var photos =
+			Directory.GetFiles(
+				FileSystem.AppDataDirectory,
+				$"appointment-{appointmentId}-*");
+
+		foreach (var photoPath in photos)
+		{
+			File.Delete(
+				photoPath);
+		}
 	}
 
 	// -------------------------
