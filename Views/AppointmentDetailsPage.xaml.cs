@@ -70,7 +70,7 @@ public partial class AppointmentDetailsPage : ContentPage
 			_appointment.Location;
 
 		StatusLabel.Text =
-			_appointment.Status;
+			_appointment.DisplayStatus;
 
 		ReportLabel.Text =
 			_appointment.MedicalReport;
@@ -79,7 +79,7 @@ public partial class AppointmentDetailsPage : ContentPage
 			_appointment.Notes;
 
 		// -------------------------
-		// PATIENTGEGEVENS
+		// PATIËNTGEGEVENS
 		// -------------------------
 
 		if (_patient is not null)
@@ -194,7 +194,7 @@ public partial class AppointmentDetailsPage : ContentPage
 		}
 
 		if (TreatmentStatusPicker.SelectedItem
-			is not string selectedStatus)
+			is not string selectedDisplayStatus)
 		{
 			await DisplayAlertAsync(
 				"Status ontbreekt",
@@ -204,10 +204,19 @@ public partial class AppointmentDetailsPage : ContentPage
 			return;
 		}
 
+		var internalStatus =
+			selectedDisplayStatus switch
+			{
+				"Actief" => "Active",
+				"Afgerond" => "Completed",
+				"Geannuleerd" => "Cancelled",
+				_ => selectedDisplayStatus
+			};
+
 		var updated =
 			await _data.UpdateTreatmentStatusAsync(
 				_patient.Id,
-				selectedStatus);
+				internalStatus);
 
 		if (!updated)
 		{
@@ -464,11 +473,6 @@ public partial class AppointmentDetailsPage : ContentPage
 
 		if (_appointment.IsCompleted)
 		{
-			await DisplayAlertAsync(
-				"Afspraak afgerond",
-				"Deze afspraak is al afgerond.",
-				"OK");
-
 			return;
 		}
 
@@ -499,7 +503,7 @@ public partial class AppointmentDetailsPage : ContentPage
 		}
 
 		StatusLabel.Text =
-			_appointment.Status;
+			_appointment.DisplayStatus;
 
 		UpdateCompletedState();
 
@@ -523,10 +527,13 @@ public partial class AppointmentDetailsPage : ContentPage
 		if (_appointment.IsCompleted)
 		{
 			CompleteButton.Text =
-				"Afspraak afgerond";
+				"✓ Afspraak afgerond";
 
 			CompleteButton.IsEnabled =
 				false;
+
+			CompleteButton.Opacity =
+				0.55;
 		}
 		else
 		{
@@ -535,6 +542,9 @@ public partial class AppointmentDetailsPage : ContentPage
 
 			CompleteButton.IsEnabled =
 				true;
+
+			CompleteButton.Opacity =
+				1;
 		}
 	}
 }

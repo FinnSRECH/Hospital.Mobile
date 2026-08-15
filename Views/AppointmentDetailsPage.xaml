@@ -146,9 +146,9 @@
                         Title="Selecteer status">
 
 						<Picker.Items>
-							<x:String>Active</x:String>
-							<x:String>Completed</x:String>
-							<x:String>Cancelled</x:String>
+							<x:String>Actief</x:String>
+							<x:String>Afgerond</x:String>
+							<x:String>Geannuleerd</x:String>
 						</Picker.Items>
 
 					</Picker>

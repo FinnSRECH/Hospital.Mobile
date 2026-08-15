@@ -32,6 +32,15 @@ public class MobileAppointment
 	public bool IsCompleted =>
 		Status == "Completed";
 
+	public string DisplayStatus =>
+		Status switch
+		{
+			"Planned" => "Gepland",
+			"Completed" => "Afgerond",
+			"Cancelled" => "Geannuleerd",
+			_ => Status
+		};
+
 	public string FormattedDate =>
 		StartTime.ToString("dd-MM-yyyy");
 

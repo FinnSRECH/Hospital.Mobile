@@ -23,4 +23,7 @@ public class MobilePatient
 
 	public string TreatmentStatus { get; set; } =
 		string.Empty;
+
+	public string AssignedDoctorEmail { get; set; } =
+		string.Empty;
 }

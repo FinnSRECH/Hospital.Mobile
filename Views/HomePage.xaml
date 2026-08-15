@@ -1,31 +1,189 @@
 <?xml version="1.0" encoding="utf-8" ?>
+
 <ContentPage
     x:Class="Hospital.Mobile.Views.HomePage"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    Title="Home">
+    Title="Dashboard">
 
-    <ScrollView>
-        <VerticalStackLayout Padding="24" Spacing="20">
-            <Label Text="Goedemorgen, Emma" FontSize="30" FontAttributes="Bold" />
-            <Label
-                Text="Bekijk waar je vandaag wordt verwacht en open snel je patiëntinformatie."
-                TextColor="{StaticResource TextMuted}" />
+	<ScrollView>
 
-            <Border BackgroundColor="White" Stroke="{StaticResource Border}" StrokeShape="RoundRectangle 16" Padding="20">
-                <VerticalStackLayout Spacing="8">
-                    <Label Text="Persoonlijke planning" FontSize="20" FontAttributes="Bold" />
-                    <Label Text="Consultaties en operaties in één overzicht." TextColor="{StaticResource TextMuted}" />
-                    <Button Text="Planning bekijken" Clicked="OnPlanningClicked" />
-                </VerticalStackLayout>
-            </Border>
+		<VerticalStackLayout
+            Padding="24"
+            Spacing="20">
 
-            <Border BackgroundColor="White" Stroke="{StaticResource Border}" StrokeShape="RoundRectangle 16" Padding="20">
-                <VerticalStackLayout Spacing="6">
-                    <Label Text="Mobiele functies" FontSize="18" FontAttributes="Bold" />
-                    <Label Text="Later voegen we biometrie, camera/foto en offline SQLite-opslag toe." TextColor="{StaticResource TextMuted}" />
-                </VerticalStackLayout>
-            </Border>
-        </VerticalStackLayout>
-    </ScrollView>
+			<!-- PAGINAKOP -->
+
+			<VerticalStackLayout
+                Spacing="6">
+
+				<Label
+                    Text="Goedemorgen, Emma"
+                    FontSize="30"
+                    FontAttributes="Bold" />
+
+				<Label
+                    Text="Bekijk je eerstvolgende afspraak en open snel je persoonlijke planning."
+                    TextColor="{StaticResource TextMuted}" />
+
+			</VerticalStackLayout>
+
+			<!-- VANDAAG -->
+
+			<Border
+                BackgroundColor="White"
+                Stroke="{StaticResource Border}"
+                StrokeShape="RoundRectangle 16"
+                Padding="20">
+
+				<VerticalStackLayout
+                    Spacing="12">
+
+					<Label
+                        Text="Vandaag"
+                        FontSize="20"
+                        FontAttributes="Bold" />
+
+					<Grid
+                        ColumnDefinitions="*,*"
+                        ColumnSpacing="12">
+
+						<Border
+                            Grid.Column="0"
+                            BackgroundColor="#F4F8F9"
+                            Stroke="{StaticResource Border}"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="14">
+
+							<VerticalStackLayout
+                                Spacing="4">
+
+								<Label
+                                    x:Name="TodayCountLabel"
+                                    Text="0"
+                                    FontSize="26"
+                                    FontAttributes="Bold"
+                                    TextColor="{StaticResource Primary}" />
+
+								<Label
+                                    Text="afspraken"
+                                    TextColor="{StaticResource TextMuted}" />
+
+							</VerticalStackLayout>
+
+						</Border>
+
+						<Border
+                            Grid.Column="1"
+                            BackgroundColor="#F4F8F9"
+                            Stroke="{StaticResource Border}"
+                            StrokeShape="RoundRectangle 12"
+                            Padding="14">
+
+							<VerticalStackLayout
+                                Spacing="4">
+
+								<Label
+                                    x:Name="CompletedCountLabel"
+                                    Text="0"
+                                    FontSize="26"
+                                    FontAttributes="Bold"
+                                    TextColor="{StaticResource Primary}" />
+
+								<Label
+                                    Text="afgerond"
+                                    TextColor="{StaticResource TextMuted}" />
+
+							</VerticalStackLayout>
+
+						</Border>
+
+					</Grid>
+
+				</VerticalStackLayout>
+
+			</Border>
+
+			<!-- VOLGENDE AFSPRAAK -->
+
+			<Border
+                x:Name="NextAppointmentCard"
+                BackgroundColor="White"
+                Stroke="{StaticResource Border}"
+                StrokeShape="RoundRectangle 16"
+                Padding="20">
+
+				<VerticalStackLayout
+                    Spacing="10">
+
+					<Label
+                        Text="Volgende afspraak"
+                        FontSize="20"
+                        FontAttributes="Bold" />
+
+					<Label
+                        x:Name="NextAppointmentTypeLabel"
+                        Text="Geen afspraak"
+                        TextColor="{StaticResource Primary}"
+                        FontAttributes="Bold" />
+
+					<Label
+                        x:Name="NextAppointmentTitleLabel"
+                        Text="Er staat momenteel geen volgende afspraak gepland."
+                        FontSize="18"
+                        FontAttributes="Bold" />
+
+					<Label
+                        x:Name="NextAppointmentPatientLabel"
+                        Text=""
+                        IsVisible="False" />
+
+					<Label
+                        x:Name="NextAppointmentInfoLabel"
+                        Text=""
+                        TextColor="{StaticResource TextMuted}"
+                        IsVisible="False" />
+
+					<Button
+                        x:Name="NextAppointmentButton"
+                        Text="Afspraak bekijken"
+                        Clicked="OnNextAppointmentClicked"
+                        IsVisible="False" />
+
+				</VerticalStackLayout>
+
+			</Border>
+
+			<!-- PLANNING -->
+
+			<Border
+                BackgroundColor="White"
+                Stroke="{StaticResource Border}"
+                StrokeShape="RoundRectangle 16"
+                Padding="20">
+
+				<VerticalStackLayout
+                    Spacing="10">
+
+					<Label
+                        Text="Mijn planning"
+                        FontSize="20"
+                        FontAttributes="Bold" />
+
+					<Label
+                        Text="Bekijk alle consultaties en operaties waarvoor je bent ingepland."
+                        TextColor="{StaticResource TextMuted}" />
+
+					<Button
+                        Text="Planning openen"
+                        Clicked="OnPlanningClicked" />
+
+				</VerticalStackLayout>
+
+			</Border>
+
+		</VerticalStackLayout>
+
+	</ScrollView>
+
 </ContentPage>

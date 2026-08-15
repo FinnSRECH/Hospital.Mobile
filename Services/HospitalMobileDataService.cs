@@ -10,6 +10,8 @@ public class HospitalMobileDataService
 	private readonly MobileDatabaseService _database =
 		new();
 
+	private string? _currentUserEmail;
+
 	private readonly List<MobilePatient> _patients =
 	[
 		new MobilePatient
@@ -21,7 +23,10 @@ public class HospitalMobileDataService
 			PhoneNumber = "0612345678",
 			Address = "Kerkstraat 12, Amsterdam",
 			ActiveTreatment = "Behandeling knieklachten",
-			TreatmentStatus = "Active"
+			TreatmentStatus = "Active",
+
+			AssignedDoctorEmail =
+				"emma.jansen@hospital.nl"
 		}
 	];
 
@@ -68,10 +73,52 @@ public class HospitalMobileDataService
 		string email,
 		string password)
 	{
-		return email.Equals(
-				   "emma.jansen@hospital.nl",
-				   StringComparison.OrdinalIgnoreCase) &&
-			   password == "Welkom123!";
+		var validLogin =
+			email.Equals(
+				"emma.jansen@hospital.nl",
+				StringComparison.OrdinalIgnoreCase) &&
+			password == "Welkom123!";
+
+		if (!validLogin)
+		{
+			_currentUserEmail =
+				null;
+
+			return false;
+		}
+
+		_currentUserEmail =
+			email.Trim();
+
+		return true;
+	}
+
+	// -------------------------
+	// TOEGANGSCONTROLE
+	// -------------------------
+
+	private bool CanAccessPatient(
+		int patientId)
+	{
+		if (string.IsNullOrWhiteSpace(
+				_currentUserEmail))
+		{
+			return false;
+		}
+
+		var patient =
+			_patients
+				.FirstOrDefault(p =>
+					p.Id == patientId);
+
+		if (patient is null)
+		{
+			return false;
+		}
+
+		return patient.AssignedDoctorEmail.Equals(
+			_currentUserEmail,
+			StringComparison.OrdinalIgnoreCase);
 	}
 
 	// -------------------------
@@ -81,13 +128,21 @@ public class HospitalMobileDataService
 	public async Task<IReadOnlyList<MobileAppointment>>
 		GetPersonalPlanningAsync()
 	{
-		foreach (var appointment in _appointments)
+		var accessibleAppointments =
+			_appointments
+				.Where(a =>
+					CanAccessPatient(
+						a.PatientId))
+				.ToList();
+
+		foreach (var appointment
+				 in accessibleAppointments)
 		{
 			await LoadAppointmentStateAsync(
 				appointment);
 		}
 
-		return _appointments
+		return accessibleAppointments
 			.OrderBy(a =>
 				a.StartTime)
 			.ToList();
@@ -103,6 +158,12 @@ public class HospitalMobileDataService
 					a.Id == id);
 
 		if (appointment is null)
+		{
+			return null;
+		}
+
+		if (!CanAccessPatient(
+				appointment.PatientId))
 		{
 			return null;
 		}
@@ -141,6 +202,12 @@ public class HospitalMobileDataService
 		GetPatientAsync(
 			int patientId)
 	{
+		if (!CanAccessPatient(
+				patientId))
+		{
+			return null;
+		}
+
 		var patient =
 			_patients
 				.FirstOrDefault(p =>
@@ -183,6 +250,12 @@ public class HospitalMobileDataService
 			return false;
 		}
 
+		if (!CanAccessPatient(
+				appointment.PatientId))
+		{
+			return false;
+		}
+
 		if (string.IsNullOrWhiteSpace(
 				note))
 		{
@@ -218,6 +291,12 @@ public class HospitalMobileDataService
 			return false;
 		}
 
+		if (!CanAccessPatient(
+				appointment.PatientId))
+		{
+			return false;
+		}
+
 		if (appointment.IsCompleted)
 		{
 			return false;
@@ -243,6 +322,12 @@ public class HospitalMobileDataService
 			int patientId,
 			string status)
 	{
+		if (!CanAccessPatient(
+				patientId))
+		{
+			return false;
+		}
+
 		var patient =
 			_patients
 				.FirstOrDefault(p =>

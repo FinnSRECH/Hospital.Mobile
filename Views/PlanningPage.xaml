@@ -10,10 +10,10 @@
 	<Grid
         RowDefinitions="Auto,*"
         Padding="20"
-        RowSpacing="16">
+        RowSpacing="18">
 
 		<VerticalStackLayout
-            Spacing="4">
+            Spacing="6">
 
 			<Label
                 Text="Mijn planning"
@@ -21,7 +21,7 @@
                 FontAttributes="Bold" />
 
 			<Label
-                Text="Consultaties en operaties waarvoor je bent ingepland."
+                Text="Bekijk je consultaties en operaties en open direct de patiëntinformatie."
                 TextColor="{StaticResource TextMuted}" />
 
 		</VerticalStackLayout>
@@ -31,76 +31,146 @@
             Grid.Row="1"
             SelectionMode="None">
 
+			<CollectionView.EmptyView>
+
+				<Border
+                    Padding="20"
+                    BackgroundColor="White"
+                    Stroke="{StaticResource Border}"
+                    StrokeShape="RoundRectangle 14">
+
+					<VerticalStackLayout
+                        Spacing="6">
+
+						<Label
+                            Text="Geen afspraken"
+                            FontSize="18"
+                            FontAttributes="Bold" />
+
+						<Label
+                            Text="Er staan momenteel geen consultaties of operaties in je planning."
+                            TextColor="{StaticResource TextMuted}" />
+
+					</VerticalStackLayout>
+
+				</Border>
+
+			</CollectionView.EmptyView>
+
 			<CollectionView.ItemTemplate>
 
 				<DataTemplate
                     x:DataType="models:MobileAppointment">
 
 					<Border
-                        Margin="0,0,0,12"
-                        Padding="16"
+                        Margin="0,0,0,14"
+                        Padding="18"
                         BackgroundColor="White"
                         Stroke="{StaticResource Border}"
                         StrokeShape="RoundRectangle 14">
 
 						<Grid
                             ColumnDefinitions="*,Auto"
-                            RowDefinitions="Auto,Auto,Auto,Auto,Auto"
-                            RowSpacing="5">
+                            RowDefinitions="Auto,Auto,Auto,Auto,Auto,Auto"
+                            RowSpacing="6">
+
+							<!-- TYPE -->
 
 							<Label
                                 Text="{Binding Type}"
                                 TextColor="{StaticResource Primary}"
-                                FontAttributes="Bold" />
+                                FontAttributes="Bold"
+                                FontSize="13" />
+
+							<!-- TITEL -->
 
 							<Label
                                 Grid.Row="1"
                                 Text="{Binding Title}"
-                                FontSize="18"
+                                FontSize="19"
                                 FontAttributes="Bold" />
 
-							<Label
-                                Grid.Row="2"
-                                Text="{Binding PatientName}" />
+							<!-- PATIËNT -->
 
-							<Label
+							<HorizontalStackLayout
+                                Grid.Row="2"
+                                Spacing="6">
+
+								<Label
+                                    Text="Patiënt:"
+                                    FontAttributes="Bold"
+                                    FontSize="13" />
+
+								<Label
+                                    Text="{Binding PatientName}"
+                                    FontSize="13" />
+
+							</HorizontalStackLayout>
+
+							<!-- LOCATIE -->
+
+							<HorizontalStackLayout
                                 Grid.Row="3"
-                                Text="{Binding Location}"
-                                TextColor="{StaticResource TextMuted}" />
+                                Spacing="6">
+
+								<Label
+                                    Text="Locatie:"
+                                    FontAttributes="Bold"
+                                    FontSize="13" />
+
+								<Label
+                                    Text="{Binding Location}"
+                                    FontSize="13"
+                                    TextColor="{StaticResource TextMuted}" />
+
+							</HorizontalStackLayout>
+
+							<!-- DATUM EN TIJD -->
 
 							<HorizontalStackLayout
                                 Grid.Row="4"
                                 Spacing="6">
 
 								<Label
-                                    Text="Status:"
+                                    Text="Datum:"
                                     FontAttributes="Bold"
                                     FontSize="13" />
 
 								<Label
-                                    Text="{Binding Status}"
-                                    FontSize="13"
-                                    TextColor="{StaticResource Primary}" />
+                                    Text="{Binding StartTime, StringFormat='{0:dd-MM-yyyy HH:mm}'}"
+                                    FontSize="13" />
 
 							</HorizontalStackLayout>
 
-							<VerticalStackLayout
-                                Grid.Column="1"
-                                Grid.RowSpan="5"
-                                HorizontalOptions="End"
-                                Spacing="8">
+							<!-- STATUS -->
+
+							<Border
+                                Grid.Row="5"
+                                HorizontalOptions="Start"
+                                Padding="10,4"
+                                Margin="0,4,0,0"
+                                BackgroundColor="#E8F3F5"
+                                StrokeThickness="0"
+                                StrokeShape="RoundRectangle 12">
 
 								<Label
-                                    Text="{Binding StartTime, StringFormat='{0:dd-MM HH:mm}'}"
+                                    Text="{Binding DisplayStatus}"
+                                    TextColor="{StaticResource Primary}"
                                     FontAttributes="Bold"
-                                    HorizontalTextAlignment="End" />
+                                    FontSize="12" />
 
-								<Button
-                                    Text="Bekijken"
-                                    Clicked="OnViewClicked"
-                                    CommandParameter="{Binding Id}" />
+							</Border>
 
-							</VerticalStackLayout>
+							<!-- ACTIE -->
+
+							<Button
+                                Grid.Column="1"
+                                Grid.RowSpan="6"
+                                Text="Bekijken"
+                                Clicked="OnViewClicked"
+                                CommandParameter="{Binding Id}"
+                                VerticalOptions="Center"
+                                Margin="14,0,0,0" />
 
 						</Grid>
 
